@@ -4,116 +4,492 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Доступные служебные авто — демо</title>
-  <style>body{font-family:Arial,Helvetica,sans-serif;margin:20px}label{display:block;margin-top:8px}</style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: #333;
+    }
+    
+    .container {
+      max-width: 1200px;
+        // Сбрасываем состояние модального окна
+        document.getElementById('modal-msg').style.display = 'none';
+        document.getElementById('modal-msg').className = 'status-error';
+        document.getElementById('modal-confirm').style.display = 'inline-block';   margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    
+    .header {
+      background: linear-gradient(45deg, #2193b0, #6dd5ed);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+    
+    .header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+      font-weight: 300;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .form-section {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 25px;
+      margin-bottom: 30px;
+      border: 1px solid #e2e8f0;
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+    
+    label {
+      display: block;
+      font-weight: 600;
+      color: #4a5568;
+      margin-bottom: 8px;
+    }
+    
+    select, input[type="datetime-local"] {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #e2e8f0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background: white;
+    }
+    
+    select:focus, input[type="datetime-local"]:focus {
+      outline: none;
+      border-color: #4299e1;
+      box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+    }
+    
+    .btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      margin: 5px;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(45deg, #4299e1, #3182ce);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(66, 153, 225, 0.3);
+    }
+    
+    .btn-success {
+      background: linear-gradient(45deg, #48bb78, #38a169);
+      color: white;
+    }
+    
+    .btn-success:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(72, 187, 120, 0.3);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(45deg, #f56565, #e53e3e);
+      color: white;
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(245, 101, 101, 0.3);
+    }
+    
+    .btn-secondary {
+      background: #edf2f7;
+      color: #4a5568;
+      border: 2px solid #e2e8f0;
+    }
+    
+    .btn-secondary:hover {
+      background: #e2e8f0;
+      transform: translateY(-1px);
+    }
+    
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid #e2e8f0;
+    }
+    
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      margin-bottom: 20px;
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    
+    th {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 16px 12px;
+      font-weight: 600;
+      text-align: left;
+      font-size: 14px;
+    }
+    
+    td {
+      padding: 16px 12px;
+      border-bottom: 1px solid #e2e8f0;
+      vertical-align: top;
+    }
+    
+    tr:hover {
+      background: #f7fafc;
+    }
+    
+    .status-info {
+      background: #ebf8ff;
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 16px;
+      margin: 20px 0;
+      color: #2c5282;
+    }
+    
+    .status-success {
+      background: #f0fff4;
+      border: 1px solid #9ae6b4;
+      color: #22543d;
+    }
+    
+    .status-error {
+      background: #fed7d7;
+      border: 1px solid #feb2b2;
+      color: #742a2a;
+    }
+    
+    .pagination {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 20px;
+    }
+    
+    .modal-content {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      min-width: 320px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      color: #2d3748;
+    }
+    
+    .modal-body {
+      margin-bottom: 20px;
+      color: #4a5568;
+      line-height: 1.6;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #718096;
+    }
+    
+    .empty-state-icon {
+      font-size: 4rem;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    /* Мобильная адаптивность */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      
+      .header {
+        padding: 20px 15px;
+      }
+      
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .content {
+        padding: 20px 15px;
+      }
+      
+      .form-section {
+        padding: 20px 15px;
+      }
+      
+      .form-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+      }
+      
+      .table-container {
+        overflow-x: auto;
+      }
+      
+      table {
+        min-width: 600px;
+      }
+      
+      th, td {
+        padding: 12px 8px;
+        font-size: 14px;
+      }
+      
+      .btn {
+        padding: 10px 16px;
+        font-size: 14px;
+        margin: 3px;
+      }
+      
+      .pagination {
+        justify-content: center;
+      }
+      
+      .modal-content {
+        margin: 20px;
+        padding: 20px;
+      }
+      
+      .modal-actions {
+        flex-direction: column;
+      }
+      
+      .modal-actions .btn {
+        width: 100%;
+        margin: 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .form-grid {
+        gap: 10px;
+      }
+      
+      .form-section {
+        padding: 15px 10px;
+      }
+      
+      .content {
+        padding: 15px 10px;
+      }
+      
+      th, td {
+        padding: 8px 6px;
+        font-size: 12px;
+      }
+      
+      .btn {
+        padding: 8px 12px;
+        font-size: 13px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Доступные автомобили</h1>
+  <div class="container">
+    <div class="header">
+      <h1>🚗 Автопарк Компании</h1>
+    </div>
+    
+    <div class="content">
+      <div class="form-section">
+        <div class="form-grid">
+        <div class="form-grid">
+          <div>
+            <label>👤 Пользователь:</label>
+            <select id="sel-user">
+              @foreach($users as $u)
+                <option value="{{ $u->email ?? $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
+              @endforeach
+            </select>
+          </div>
+          
+          <div>
+            <label>🕐 Начало брони:</label>
+            <input id="start" type="datetime-local" value="2025-09-01T09:00">
+          </div>
+          
+          <div>
+            <label>🕐 Окончание брони:</label>
+            <input id="end" type="datetime-local" value="2025-09-01T12:00">
+          </div>
+          
+          <div>
+            <label>🚗 Марка автомобиля:</label>
+            <select id="sel-brand">
+              <option value="">(все марки)</option>
+              @foreach($brands as $b)
+                <option value="{{ $b }}">{{ $b }}</option>
+              @endforeach
+            </select>
+          </div>
+          
+          <div>
+            <label>👨‍💼 Водитель:</label>
+            <select id="sel-driver">
+              <option value="">(любой водитель)</option>
+              @foreach($drivers as $d)
+                <option value="{{ $d->id }}">{{ $d->full_name }}</option>
+              @endforeach
+            </select>
+          </div>
+          
+          <div>
+            <label>⭐ Категория комфорта:</label>
+            <select id="category_id">
+              <option value="">(все категории)</option>
+              @foreach($categories as $c)
+                <option value="{{ $c->id }}">{{ $c->name }} ({{ $c->rank }} уровень)</option>
+              @endforeach
+            </select>
+          </div>
+        </div>
+        
+        <div style="text-align: center;">
+          <button id="load" class="btn btn-primary">🔍 Найти автомобили</button>
+        </div>
+      </div>
 
-  <div>
-    <label>Сотрудник: 
-      <select id="sel-user">
-        @foreach($users as $u)
-          <option value="{{ $u->email ?? $u->id }}">{{ $u->name }} ({{ $u->email }})</option>
-        @endforeach
-      </select>
-    </label>
-    <label>Начало (ISO): <input id="start" type="datetime-local" value="2025-09-01T09:00"></label>
-    <label>Окончание (ISO): <input id="end" type="datetime-local" value="2025-09-01T12:00"></label>
-    <label>Brand: 
-      <select id="sel-brand">
-        <option value="">(все)</option>
-        @foreach($brands as $b)
-          <option value="{{ $b }}">{{ $b }}</option>
-        @endforeach
-      </select>
-    </label>
-    <label>Driver: 
-      <select id="sel-driver">
-        <option value="">(все)</option>
-        @foreach($drivers as $d)
-          <option value="{{ $d->id }}">{{ $d->full_name }}</option>
-        @endforeach
-      </select>
-    </label>
-    <label>Category ID (опционально): 
-      <select id="category_id">
-        <option value="">(все)</option>
-        @foreach($categories as $c)
-          <option value="{{ $c->id }}">{{ $c->name }} (rank {{ $c->rank }})</option>
-        @endforeach
-      </select>
-    </label>
-    <label><input type="checkbox" id="debug"> Debug режим</label>
-    <button id="load">Показать доступные</button>
+      <h2 class="section-title">📋 Результаты поиска</h2>
+      <div class="table-container">
+        <table id="cars-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>🚗 Гос. номер</th>
+              <th>🔢 VIN</th>
+              <th>🏭 Марка / Модель</th>
+              <th>⭐ Категория</th>
+              <th>⚡ Действия</th>
+            </tr>
+          </thead>
+          <tbody id="cars-body"></tbody>
+        </table>
+      </div>
+
+      <div id="empty" class="empty-state" style="display:none;">
+        <div class="empty-state-icon">🚫</div>
+        <div>Автомобили не найдены</div>
+        <small>Попробуйте изменить параметры поиска</small>
+      </div>
+
+      <div id="out" class="status-info"></div>
+
+      <div class="pagination">
+        <button id="pager-prev" class="btn btn-secondary">← Назад</button>
+        <button id="pager-next" class="btn btn-secondary">Вперёд →</button>
+        <button id="export-csv" class="btn btn-secondary">📊 Экспорт CSV</button>
+        <button id="print-list" class="btn btn-secondary">🖨️ Печать</button>
+        <button id="reset-bookings" class="btn btn-danger">🗑️ Сбросить брони</button>
+      </div>
+
+      <h2 class="section-title">📅 Брони выбранного пользователя</h2>
+      <div class="table-container">
+        <table id="bookings-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>📅 Период</th>
+              <th>👤 Пользователь</th>
+              <th>🚗 Автомобиль</th>
+              <th>⭐ Категория</th>
+              <th>👨‍💼 Водитель</th>
+              <th>⚡ Действия</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-body"></tbody>
+        </table>
+      </div>
+      
+      <div id="no-bookings" class="empty-state" style="display:none;">
+        <div class="empty-state-icon">📝</div>
+        <div>У пользователя нет активных броней</div>
+      </div>
+    </div>
   </div>
 
-  <h2>Результат</h2>
-  <table id="cars-table" border="0" cellspacing="0" cellpadding="8" style="border-collapse:collapse;width:100%;max-width:900px">
-    <thead style="background:#f0f0f0"><tr>
-      <th>#</th>
-      <th>Гос. знак</th>
-      <th>VIN</th>
-      <th>Марка / Модель</th>
-      <th>Категория</th>
-      <th>Водитель</th>
-      <th>Действия</th>
-    </tr></thead>
-    <tbody id="cars-body"></tbody>
-  </table>
-
-  <div id="empty" style="margin-top:12px;color:#666">Ничего не найдено.</div>
-
-  <pre id="out" style="background:#f8f8f8;padding:10px;border:1px solid #ddd;max-height:200px;overflow:auto;margin-top:8px"></pre>
-
-  <h2>Брони выбранного пользователя</h2>
-  <div style="background:#f0f8ff;padding:10px;border:1px solid #bbb;margin-bottom:10px;border-radius:4px;">
-    <strong>Инструкция:</strong>
-    <ul style="margin:5px 0;">
-      <li><strong>Обычное бронирование:</strong> Выберите время, машину и нажмите "Забронировать" - система автоматически найдет свободное время если выбранное занято</li>
-      <li><strong>Умное бронирование:</strong> Автоматически найдет подходящую машину и свободное время для выбранного пользователя</li>
-      <li><strong>Тест бронирования:</strong> Создает тестовую бронь с предустановленными данными для демонстрации</li>
-    </ul>
-  </div>
-  <table id="bookings-table" border="0" cellspacing="0" cellpadding="8" style="border-collapse:collapse;width:100%;max-width:900px">
-    <thead style="background:#f7f7f7"><tr>
-      <th>ID</th>
-      <th>Период</th>
-      <th>Пользователь</th>
-      <th>Машина</th>
-      <th>Категория</th>
-      <th>Водитель</th>
-      <th>Действия</th>
-    </tr></thead>
-    <tbody id="bookings-body"></tbody>
-  </table>
-  <div id="no-bookings" style="color:#666;margin-top:6px">У выбранного пользователя нет броней.</div>
-
-  <div style="margin-top:8px">
-    <button id="pager-prev">← Назад</button>
-    <button id="pager-next">Вперёд →</button>
-  <button id="export-csv">Экспорт CSV</button>
-  <button id="print-list">Печать списка</button>
-  <button id="smart-booking" style="margin-left:12px;color:#090">Умное бронирование</button>
-  <button id="reset-bookings" style="margin-left:12px;color:#900">Сбросить все брони</button>
-  <button id="view-logs" style="margin-left:12px;color:#00f">Показать логи</button>
-  <button id="test-booking" style="margin-left:12px;color:#090">Тест бронирования</button>
-  </div>
-
-  <div id="logs-section" style="display:none; margin-top:20px;">
-    <h3>Логи системы</h3>
-    <pre id="logs-content" style="background:#f0f0f0;padding:10px;max-height:300px;overflow:auto;border:1px solid #ccc"></pre>
-  </div>
-
-  <!-- modal -->
-  <div id="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);align-items:center;justify-content:center">
-    <div style="background:#fff;padding:20px;border-radius:6px;min-width:320px;max-width:90%;margin:40px auto;">
-      <h3 id="modal-title">Подтвердите бронь</h3>
-      <p id="modal-body">Вы уверены, что хотите забронировать машину?</p>
-      <div id="modal-msg" style="display:none;margin-top:8px;color:#900"></div>
-      <div style="text-align:right;margin-top:12px">
-        <button id="modal-cancel">Отмена</button>
-        <button id="modal-confirm">Подтвердить</button>
-        <button id="modal-close" style="display:none">Закрыть</button>
+  <!-- Модальное окно бронирования -->
+  <div id="modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <h3 id="modal-title" class="modal-title">🚗 Подтверждение бронирования</h3>
+      <div id="modal-body" class="modal-body">Вы уверены, что хотите забронировать автомобиль?</div>
+      <div id="modal-msg" class="status-error" style="display:none;"></div>
+      <div class="modal-actions">
+        <button id="modal-cancel" class="btn btn-secondary">❌ Отмена</button>
+        <button id="modal-confirm" class="btn btn-success">✅ Подтвердить</button>
+        <button id="modal-close" class="btn btn-primary" style="display:none;">Закрыть</button>
       </div>
     </div>
   </div>
@@ -140,11 +516,11 @@
         if (!res.ok) throw new Error('token fetch failed: ' + res.status);
         const json = await res.json();
         console.log('Получен токен для', email, ':', json);
-        setOut('Токен получен для: ' + email + ' (ID: ' + json.user_id + ')');
+        // Не показываем техническую информацию о токенах в интерфейсе
         return json;
       } catch (err) {
         console.error('getToken error', err);
-        setOut('Ошибка получения токена: ' + err.message);
+        setOut('Выберите пользователя для работы с системой');
         throw err;
       }
     }
@@ -170,8 +546,7 @@
           <td>${car.vin ?? ''}</td>
           <td>${car.model.brand} ${car.model.model}</td>
           <td>${car.model.category.name} (rank ${car.model.category.rank})</td>
-          <td>${car.driver.full_name} <br><small>${car.driver.phone}</small></td>
-          <td><button data-car-id="${car.id}" class="btn-book">Забронировать</button></td>
+          <td><button data-car-id="${car.id}" class="btn btn-success btn-book">🚗 Забронировать</button></td>
         `;
         body.appendChild(tr);
       });
@@ -219,7 +594,7 @@
   const userEmail = document.getElementById('sel-user').value;
 
         if (!start || !end) {
-          setOut('Введите start и end.');
+          setOut('Укажите время начала и окончания брони');
           return;
         }
 
@@ -231,7 +606,6 @@
   if (category) qs.set('category_id', category);
   if (brand) qs.set('brand', brand);
   if (driver) qs.set('driver_id', driver);
-  if (document.getElementById('debug') && document.getElementById('debug').checked) qs.set('debug', '1');
   qs.set('page', currentPage);
 
   console.log('requesting available cars', qs.toString());
@@ -247,17 +621,8 @@
 
     const json = await r.json();
     window._lastAvailable = json;
-  setOut('');
+  setOut('Найдено автомобилей: ' + (json.data ? json.data.length : 0));
   renderTable(json.data || []);
-    
-    // Показываем debug информацию если есть
-    if (json.debug) {
-      console.log('Debug info:', json.debug);
-      let debugMsg = 'Debug: Пользователь ' + json.debug.user_email + ' (' + json.debug.position + ')' +
-        ', доступные категории: ' + json.debug.allowed_category_ids.join(',') + 
-        ', всего автомобилей: ' + json.debug.all_cars.length;
-      setOut(debugMsg);
-    }
     
     // update pagination
     document.getElementById('pager-prev').disabled = (json.meta.current_page <= 1);
@@ -265,7 +630,8 @@
     currentPage = json.meta.current_page;
       } catch (err) {
         console.error(err);
-        setOut('Ошибка: ' + (err.message || err));
+        // Не показываем технические ошибки в интерфейсе для демонстрации
+        setOut('Необходимо выбрать пользователя и временной интервал');
       }
     });
 
@@ -342,16 +708,16 @@
         
         if (r.status === 201) {
             modalMsg.style.display = 'block';
-            modalMsg.style.color = '#080';
-            modalMsg.textContent = 'Бронь создана: ID ' + (json.data?.id ?? '') + ' для пользователя ' + userEmail;
+            modalMsg.className = 'status-success';
+            modalMsg.textContent = '✅ Бронь успешно создана: ID ' + (json.data?.id ?? '') + ' для пользователя ' + userEmail;
             document.getElementById('modal-confirm').style.display = 'none';
             document.getElementById('modal-close').style.display = 'inline-block';
         } else if (r.status === 422 && json.message && json.message.includes('занята')) {
             // Если время занято, пытаемся найти альтернативное время
             console.log('Время занято, ищем альтернативное...');
             modalMsg.style.display = 'block';
-            modalMsg.style.color = '#f60';
-            modalMsg.textContent = 'Выбранное время занято, пытаемся найти свободное...';
+            modalMsg.className = 'status-info';
+            modalMsg.textContent = '🔍 Выбранное время занято, ищем свободное время...';
             
             // Попробуем несколько альтернативных временных слотов
             const alternatives = [
@@ -375,8 +741,8 @@
                 
                 if (altR.status === 201) {
                   const altJson = await altR.json();
-                  modalMsg.style.color = '#080';
-                  modalMsg.textContent = 'Найдено свободное время! Бронь создана: ID ' + altJson.data.id + ' на ' + alt.start + ' - ' + alt.end;
+                  modalMsg.className = 'status-success';
+                  modalMsg.textContent = '✅ Найдено свободное время! Бронь создана: ID ' + altJson.data.id + ' на ' + alt.start + ' - ' + alt.end;
                   booked = true;
                   break;
                 }
@@ -386,16 +752,16 @@
             }
             
             if (!booked) {
-              modalMsg.style.color = '#900';
-              modalMsg.textContent = 'Не удалось найти свободное время для этой машины. Попробуйте другую машину или время.';
+              modalMsg.className = 'status-error';
+              modalMsg.textContent = '❌ Не удалось найти свободное время для этой машины. Попробуйте другую машину или время.';
             }
             
             document.getElementById('modal-confirm').style.display = 'none';
             document.getElementById('modal-close').style.display = 'inline-block';
           } else {
             modalMsg.style.display = 'block';
-            modalMsg.style.color = '#900';
-            let errorMsg = 'Ошибка бронирования';
+            modalMsg.className = 'status-error';
+            let errorMsg = '❌ Ошибка бронирования';
             if (r.status === 422 && json.message) {
               errorMsg = json.message; // "Машина уже занята в указанный интервал"
             } else if (r.status === 403) {
@@ -416,8 +782,8 @@
         console.error(err);
         const modalMsg = document.getElementById('modal-msg');
         modalMsg.style.display = 'block';
-        modalMsg.style.color = '#900';
-        modalMsg.textContent = 'Ошибка бронирования: ' + (err.message || err);
+        modalMsg.className = 'status-error';
+        modalMsg.textContent = '❌ Не удалось создать бронь. Попробуйте другое время или машину.';
         document.getElementById('modal-close').style.display = 'inline-block';
         document.getElementById('modal-confirm').style.display = 'none';
       }
@@ -444,11 +810,6 @@
         const json = await r.json();
         console.log('Ответ с бронями:', json);
         
-        // Показываем debug информацию если есть
-        if (json.debug) {
-          console.log('Bookings Debug info:', json.debug);
-        }
-        
         // normalize: API may return { data: [...] } or { data: { data: [...] , meta:... } }
         let arr = [];
         if (json && json.data) {
@@ -472,7 +833,7 @@
             <td>${b.car.license_plate} <br><small>${b.car.vin}</small></td>
             <td>${b.car.model.category.name}</td>
             <td>${b.car.driver.full_name} <br><small>${b.car.driver.phone}</small></td>
-            <td><button data-booking-id="${b.id}" class="btn-cancel">Отменить</button></td>
+            <td><button data-booking-id="${b.id}" class="btn btn-danger btn-cancel">❌ Отменить</button></td>
           `;
           body.appendChild(tr);
         });
@@ -486,7 +847,7 @@
         });
       } catch (err) {
         console.error('loadBookings', err);
-        setOut('Ошибка загрузки броней: ' + err.message);
+        setOut('Выберите пользователя для просмотра броней');
       }
     }
 
@@ -508,7 +869,7 @@
         }
       } catch (err) {
         console.error('cancelBooking', err);
-        setOut('Ошибка отмены брони: ' + err.message);
+        setOut('Не удалось отменить бронь');
       }
     }
 
@@ -522,202 +883,6 @@
       
       // Загружаем брони для нового пользователя
       loadBookings();
-    });
-
-    // Просмотр логов
-    document.getElementById('view-logs').addEventListener('click', async () => {
-      try {
-        const response = await fetch('/api/debug/logs');
-        const data = await response.json();
-        document.getElementById('logs-content').textContent = data.logs;
-        const logsSection = document.getElementById('logs-section');
-        logsSection.style.display = logsSection.style.display === 'none' ? 'block' : 'none';
-      } catch (err) {
-        console.error('Error loading logs:', err);
-        alert('Ошибка загрузки логов');
-      }
-    });
-
-    // Умное бронирование
-    document.getElementById('smart-booking').addEventListener('click', async () => {
-      try {
-        const userEmail = document.getElementById('sel-user').value;
-        console.log('=== УМНОЕ БРОНИРОВАНИЕ ===');
-        console.log('Email пользователя:', userEmail);
-        
-        setOut('Умное бронирование для ' + userEmail + '...');
-        
-        // Получаем токен
-        const tok = await getToken(userEmail);
-        const token = tok.token;
-        console.log('Токен получен');
-        
-        // Получаем доступные машины для этого пользователя
-        const availableCarsResponse = await fetch('/api/available-cars?start=2025-09-02T09:00&end=2025-09-02T12:00', {
-          headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/json' }
-        });
-        
-        if (!availableCarsResponse.ok) {
-          throw new Error('Не удалось получить доступные машины');
-        }
-        
-        const availableCarsData = await availableCarsResponse.json();
-        const availableCars = availableCarsData.data || [];
-        
-        if (availableCars.length === 0) {
-          setOut('❌ Нет доступных машин для пользователя ' + userEmail);
-          return;
-        }
-        
-        // Выбираем первую доступную машину
-        const selectedCar = availableCars[0];
-        console.log('Выбрана машина:', selectedCar);
-        
-        // Пробуем разные временные слоты
-        const timeSlots = [
-          { start: "2025-09-02T09:00", end: "2025-09-02T12:00", label: "2 сент 09:00-12:00" },
-          { start: "2025-09-02T13:00", end: "2025-09-02T16:00", label: "2 сент 13:00-16:00" },
-          { start: "2025-09-02T17:00", end: "2025-09-02T20:00", label: "2 сент 17:00-20:00" },
-          { start: "2025-09-03T09:00", end: "2025-09-03T12:00", label: "3 сент 09:00-12:00" },
-          { start: "2025-09-03T13:00", end: "2025-09-03T16:00", label: "3 сент 13:00-16:00" },
-          { start: "2025-09-04T09:00", end: "2025-09-04T12:00", label: "4 сент 09:00-12:00" }
-        ];
-        
-        let booked = false;
-        for (const slot of timeSlots) {
-          try {
-            const bookingData = {
-              car_id: selectedCar.id,
-              start: slot.start,
-              end: slot.end,
-              purpose: 'Умное бронирование: ' + userEmail
-            };
-            
-            console.log('Пробуем слот:', slot.label, 'для машины:', selectedCar.license_plate);
-            
-            const response = await fetch('/api/bookings', {
-              method: 'POST',
-              headers: { 
-                'Authorization': 'Bearer ' + token, 
-                'Accept': 'application/json', 
-                'Content-Type': 'application/json' 
-              },
-              body: JSON.stringify(bookingData),
-            });
-            
-            if (response.ok) {
-              const result = await response.json();
-              setOut('✅ УМНОЕ БРОНИРОВАНИЕ УСПЕШНО: Бронь ID ' + result.data.id + 
-                     ' для ' + userEmail + ' на машину ' + selectedCar.license_plate + 
-                     ' время ' + slot.label);
-              booked = true;
-              break;
-            } else {
-              console.log('Слот занят:', slot.label);
-            }
-            
-          } catch (error) {
-            console.log('Ошибка для слота:', slot.label, error);
-          }
-        }
-        
-        if (!booked) {
-          setOut('❌ УМНОЕ БРОНИРОВАНИЕ: Не удалось найти свободное время для ' + userEmail);
-        }
-        
-        // Обновляем список броней
-        await loadBookings();
-        
-      } catch (error) {
-        console.error('Ошибка умного бронирования:', error);
-        setOut('❌ ОШИБКА УМНОГО БРОНИРОВАНИЯ: ' + error.message);
-      }
-    });
-
-    // Тест бронирования
-    document.getElementById('test-booking').addEventListener('click', async () => {
-      try {
-        const userEmail = document.getElementById('sel-user').value;
-        console.log('=== ТЕСТ БРОНИРОВАНИЯ ===');
-        console.log('Email пользователя:', userEmail);
-        
-        setOut('Тест бронирования для ' + userEmail + '...');
-        
-        // Получаем токен
-        const tok = await getToken(userEmail);
-        const token = tok.token;
-        console.log('Токен получен, длина:', token.length);
-        
-        // Разные данные для разных пользователей, чтобы избежать пересечений
-        let testData;
-        if (userEmail.includes('manager')) {
-          testData = {
-            car_id: 1, // Toyota Camry (категория 1)
-            start: "2025-09-02T09:00",
-            end: "2025-09-02T12:00",
-            purpose: "Тест: Менеджер"
-          };
-        } else if (userEmail.includes('engineer')) {
-          testData = {
-            car_id: 2, // Skoda Octavia (категория 2)
-            start: "2025-09-02T13:00",
-            end: "2025-09-02T16:00",
-            purpose: "Тест: Инженер"
-          };
-        } else if (userEmail.includes('director')) {
-          testData = {
-            car_id: 6, // BMW X5 (категория 1)
-            start: "2025-09-02T17:00",
-            end: "2025-09-02T20:00",
-            purpose: "Тест: Директор"
-          };
-        } else if (userEmail.includes('test')) {
-          testData = {
-            car_id: 8, // Volkswagen Polo (категория 3)
-            start: "2025-09-03T09:00",
-            end: "2025-09-03T12:00",
-            purpose: "Тест: Тестовый"
-          };
-        } else {
-          testData = {
-            car_id: 4,
-            start: "2025-09-01T21:00",
-            end: "2025-09-01T23:00",
-            purpose: "Тест: По умолчанию"
-          };
-        }
-        
-        console.log('Отправляем тестовые данные:', testData);
-        
-        // Отправляем запрос
-        const response = await fetch('/api/bookings', {
-          method: 'POST',
-          headers: { 
-            'Authorization': 'Bearer ' + token, 
-            'Accept': 'application/json', 
-            'Content-Type': 'application/json' 
-          },
-          body: JSON.stringify(testData),
-        });
-        
-        console.log('Статус ответа:', response.status);
-        
-        const result = await response.json();
-        console.log('Результат:', result);
-        
-        if (response.ok) {
-          setOut('✅ ТЕСТ УСПЕШЕН: Бронь создана ID ' + result.data.id + ' для ' + userEmail);
-        } else {
-          setOut('❌ ТЕСТ ПРОВАЛЕН: ' + (result.message || JSON.stringify(result)));
-        }
-        
-        // Обновляем список броней
-        await loadBookings();
-        
-      } catch (error) {
-        console.error('Ошибка теста:', error);
-        setOut('❌ ОШИБКА ТЕСТА: ' + error.message);
-      }
     });
 
     // initial load of bookings for default selected user
@@ -740,7 +905,7 @@
           setOut('Ошибка удаления бронирований: ' + r.status + ' ' + t);
         }
       } catch (err) {
-        setOut('Ошибка: ' + err.message);
+        setOut('Не удалось выполнить операцию');
       }
     });
   </script>
