@@ -28,7 +28,33 @@ class AvailableCarsController extends Controller
             ->comfortCategories()
             ->pluck('comfort_categories.id');
 
-    // no debug output in production demo responses
+        \Log::info('Available cars request', [
+            'user_id' => $user->id,
+            'user_email' => $user->email,
+            'position' => $user->position->name,
+            'allowed_categories' => $allowedCategoryIds->toArray(),
+            'position_id' => $user->position->id
+        ]);
+
+        // Debug информация для локальной среды
+        $debug = [];
+        if (app()->isLocal() && request()->has('debug')) {
+            $debug = [
+                'user_id' => $user->id,
+                'user_email' => $user->email,
+                'position' => $user->position->name,
+                'allowed_category_ids' => $allowedCategoryIds->toArray(),
+                'all_categories' => \App\Models\ComfortCategory::all()->pluck('name', 'id')->toArray(),
+                'all_cars' => \App\Models\Car::with('model.comfortCategory')->get()->map(function($car) {
+                    return [
+                        'id' => $car->id,
+                        'license_plate' => $car->license_plate,
+                        'category_id' => $car->model->comfortCategory->id,
+                        'category_name' => $car->model->comfortCategory->name,
+                    ];
+                })->toArray(),
+            ];
+        }
 
         $q = Car::query()
             ->with(['model.comfortCategory','driver'])
@@ -81,6 +107,11 @@ class AvailableCarsController extends Controller
                 'total'        => $cars->total(),
             ],
     ];
+
+    // Добавляем debug информацию если запрошена
+    if (!empty($debug)) {
+        $resp['debug'] = $debug;
+    }
 
     return response()->json($resp);
     }

@@ -13,11 +13,12 @@ class UserTokenSeeder extends Seeder
         $posMgr = Position::firstOrCreate(['name' => 'Manager']);
         $posEng = Position::firstOrCreate(['name' => 'Engineer']);
         $posDir = Position::firstOrCreate(['name' => 'Director']);
+        $posTest = Position::firstOrCreate(['name' => 'Test']); // Добавляем позицию Test
 
         $userMgr = User::updateOrCreate(
             ['email' => 'manager@example.com'],
             [
-                'name' => 'Manager User',
+                'name' => 'Менеджер (Manager)',
                 'password' => bcrypt('password'),
                 'position_id' => $posMgr->id,
             ]
@@ -26,7 +27,7 @@ class UserTokenSeeder extends Seeder
         $userEng = User::updateOrCreate(
             ['email' => 'engineer@example.com'],
             [
-                'name' => 'Engineer User',
+                'name' => 'Инженер (Engineer)',
                 'password' => bcrypt('password'),
                 'position_id' => $posEng->id,
             ]
@@ -35,18 +36,29 @@ class UserTokenSeeder extends Seeder
         $userDir = User::updateOrCreate(
             ['email' => 'director@example.com'],
             [
-                'name' => 'Director User',
+                'name' => 'Директор (Director)',
                 'password' => bcrypt('password'),
                 'position_id' => $posDir->id,
+            ]
+        );
+
+        $userTest = User::updateOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Тестовый (Test)',
+                'password' => bcrypt('password'),
+                'position_id' => $posTest->id,
             ]
         );
 
         $tokenMgr = $userMgr->createToken('manager')->plainTextToken;
         $tokenEng = $userEng->createToken('engineer')->plainTextToken;
         $tokenDir = $userDir->createToken('director')->plainTextToken;
+        $tokenTest = $userTest->createToken('test')->plainTextToken;
 
         $this->command->info('Manager TOKEN: ' . $tokenMgr);
         $this->command->info('Engineer TOKEN: ' . $tokenEng);
         $this->command->info('Director TOKEN: ' . $tokenDir);
+        $this->command->info('Test TOKEN: ' . $tokenTest);
     }
 }

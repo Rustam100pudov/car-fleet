@@ -12,6 +12,7 @@ class DemoSeeder extends Seeder
         $posMgr = Position::firstOrCreate(['name' => 'Manager']);
         $posEng = Position::firstOrCreate(['name' => 'Engineer']);
         $posDir = Position::firstOrCreate(['name' => 'Director']);
+        $posTest = Position::firstOrCreate(['name' => 'Test']); // Добавляем позицию Test
 
         $cat1 = ComfortCategory::firstOrCreate(['name' => 'Первая','rank'=>1]);
         $cat2 = ComfortCategory::firstOrCreate(['name' => 'Вторая','rank'=>2]);
@@ -21,6 +22,7 @@ class DemoSeeder extends Seeder
         $posMgr->comfortCategories()->syncWithoutDetaching([$cat1->id, $cat2->id]);
         $posEng->comfortCategories()->syncWithoutDetaching([$cat2->id, $cat3->id]);
         $posDir->comfortCategories()->syncWithoutDetaching([$cat1->id, $cat2->id, $cat3->id]);
+        $posTest->comfortCategories()->syncWithoutDetaching([$cat3->id]); // Test только 3-я категория
 
         // Модели автомобилей
         $m1 = CarModel::firstOrCreate(['brand'=>'Toyota','model'=>'Camry','comfort_category_id'=>$cat1->id]);
@@ -34,15 +36,15 @@ class DemoSeeder extends Seeder
         $m9 = CarModel::firstOrCreate(['brand'=>'Hyundai','model'=>'Solaris','comfort_category_id'=>$cat3->id]);
 
         // Водители
-        $d1 = Driver::firstOrCreate(['full_name'=>'Иванов Иван','phone'=>'+7 900 000-00-01']);
-        $d2 = Driver::firstOrCreate(['full_name'=>'Петров Пётр','phone'=>'+7 900 000-00-02']);
-        $d3 = Driver::firstOrCreate(['full_name'=>'Сидоров Сергей','phone'=>'+7 900 000-00-03']);
-        $d4 = Driver::firstOrCreate(['full_name'=>'Кузнецов Алексей','phone'=>'+7 900 000-00-04']);
-        $d5 = Driver::firstOrCreate(['full_name'=>'Морозова Анна','phone'=>'+7 900 000-00-05']);
-        $d6 = Driver::firstOrCreate(['full_name'=>'Васильев Василий','phone'=>'+7 900 000-00-06']);
-        $d7 = Driver::firstOrCreate(['full_name'=>'Федорова Елена','phone'=>'+7 900 000-00-07']);
-        $d8 = Driver::firstOrCreate(['full_name'=>'Новиков Олег','phone'=>'+7 900 000-00-08']);
-        $d9 = Driver::firstOrCreate(['full_name'=>'Козлова Мария','phone'=>'+7 900 000-00-09']);
+        $d1 = Driver::firstOrCreate(['full_name'=>'Водитель А','phone'=>'+7 900 000-00-01']);
+        $d2 = Driver::firstOrCreate(['full_name'=>'Водитель Б','phone'=>'+7 900 000-00-02']);
+        $d3 = Driver::firstOrCreate(['full_name'=>'Водитель В','phone'=>'+7 900 000-00-03']);
+        $d4 = Driver::firstOrCreate(['full_name'=>'Водитель Г','phone'=>'+7 900 000-00-04']);
+        $d5 = Driver::firstOrCreate(['full_name'=>'Водитель Д','phone'=>'+7 900 000-00-05']);
+        $d6 = Driver::firstOrCreate(['full_name'=>'Водитель Е','phone'=>'+7 900 000-00-06']);
+        $d7 = Driver::firstOrCreate(['full_name'=>'Водитель Ж','phone'=>'+7 900 000-00-07']);
+        $d8 = Driver::firstOrCreate(['full_name'=>'Водитель З','phone'=>'+7 900 000-00-08']);
+        $d9 = Driver::firstOrCreate(['full_name'=>'Водитель И','phone'=>'+7 900 000-00-09']);
 
         // Автомобили
         Car::firstOrCreate(['license_plate'=>'A001AA116'], ['car_model_id'=>$m1->id,'driver_id'=>$d1->id]);

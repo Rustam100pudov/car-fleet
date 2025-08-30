@@ -14,7 +14,7 @@ class BookingController extends Controller
     {
         $perPage = (int) $request->integer('per_page', 20);
 
-        $bookings = Booking::with(['car.model.comfortCategory', 'car.driver'])
+        $bookings = Booking::with(['car.model.comfortCategory', 'car.driver', 'user.position'])
             ->where('user_id', $request->user()->id)
             ->orderBy('starts_at')
             ->paginate($perPage);
@@ -27,6 +27,12 @@ class BookingController extends Controller
                     'ends_at'   => $b->ends_at->toDateTimeString(),
                     'status'    => $b->status,
                     'purpose'   => $b->purpose,
+                    'user' => [
+                        'id' => $b->user->id,
+                        'name' => $b->user->name,
+                        'email' => $b->user->email,
+                        'position' => $b->user->position ? $b->user->position->name : 'Не указана',
+                    ],
                     'car' => [
                         'id' => $b->car->id,
                         'license_plate' => $b->car->license_plate,
@@ -59,12 +65,43 @@ class BookingController extends Controller
     // Создание брони
     public function store(Request $request)
     {
+        // Debug: логируем информацию о пользователе
+        \Log::info('Booking store attempt', [
+            'user_id' => $request->user()->id,
+            'user_email' => $request->user()->email,
+            'user_position' => $request->user()->position ? $request->user()->position->name : 'no position',
+            'request_data' => $request->all()
+        ]);
+
         $validated = $request->validate([
             'car_id'  => ['required', 'exists:cars,id'],
             'start'   => ['required', 'date'],
             'end'     => ['required', 'date', 'after:start'],
             'purpose' => ['nullable', 'string', 'max:255'],
         ]);
+
+        // Проверяем, доступна ли машина для пользователя
+        $car = \App\Models\Car::with('model.comfortCategory')->find($validated['car_id']);
+        $userCategoryIds = $request->user()->position->comfortCategories()->pluck('comfort_categories.id');
+        
+        \Log::info('Car access check', [
+            'car_id' => $car->id,
+            'car_category_id' => $car->model->comfortCategory->id,
+            'user_allowed_categories' => $userCategoryIds->toArray(),
+            'access_granted' => $userCategoryIds->contains($car->model->comfortCategory->id)
+        ]);
+
+        if (!$userCategoryIds->contains($car->model->comfortCategory->id)) {
+            \Log::warning('User attempted to book car from unauthorized category', [
+                'user_id' => $request->user()->id,
+                'car_id' => $car->id,
+                'car_category' => $car->model->comfortCategory->name
+            ]);
+            return response()->json([
+                'message' => 'У вас нет доступа к машинам этой категории.',
+                'errors'  => ['car_id' => ['unauthorized_category']],
+            ], 403);
+        }
 
         $start = Carbon::parse($validated['start']);
         $end   = Carbon::parse($validated['end']);
@@ -77,6 +114,11 @@ class BookingController extends Controller
             ->exists();
 
         if ($overlap) {
+            \Log::info('Booking overlap detected', [
+                'car_id' => $validated['car_id'],
+                'start' => $start,
+                'end' => $end
+            ]);
             return response()->json([
                 'message' => 'Машина уже занята в указанный интервал.',
                 'errors'  => ['interval' => ['overlap']],
@@ -91,7 +133,15 @@ class BookingController extends Controller
             'purpose'   => $validated['purpose'] ?? null,
         ]);
 
-        $booking->load('car.model.comfortCategory', 'car.driver');
+        \Log::info('Booking created successfully', [
+            'booking_id' => $booking->id,
+            'user_id' => $booking->user_id,
+            'car_id' => $booking->car_id,
+            'starts_at' => $booking->starts_at,
+            'ends_at' => $booking->ends_at
+        ]);
+
+        $booking->load('car.model.comfortCategory', 'car.driver', 'user.position');
 
         // return consistent shape
         $b = $booking;
@@ -101,6 +151,12 @@ class BookingController extends Controller
             'ends_at'   => $b->ends_at->toDateTimeString(),
             'status'    => $b->status,
             'purpose'   => $b->purpose,
+            'user' => [
+                'id' => $b->user->id,
+                'name' => $b->user->name,
+                'email' => $b->user->email,
+                'position' => $b->user->position ? $b->user->position->name : 'Не указана',
+            ],
             'car' => [
                 'id' => $b->car->id,
                 'license_plate' => $b->car->license_plate,
