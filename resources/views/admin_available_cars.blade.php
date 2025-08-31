@@ -361,6 +361,9 @@
   <div class="container">
     <div class="header">
       <h1>🚗 Автопарк Компании</h1>
+      <p style="margin:10px 0 0 0;font-size:1.1rem;opacity:0.9;font-weight:300;">
+        Система бронирования служебного транспорта с контролем доступа
+      </p>
     </div>
     
     <div class="content">
@@ -397,7 +400,7 @@
           </div>
           
           <div>
-            <label>👨‍💼 Водитель:</label>
+            <label>👨‍💼 Закрепленный водитель:</label>
             <select id="sel-driver">
               <option value="">(любой водитель)</option>
               @foreach($drivers as $d)
@@ -419,10 +422,85 @@
         
         <div style="text-align: center;">
           <button id="load" class="btn btn-primary">🔍 Найти автомобили</button>
+          <button id="toggle-help" class="btn btn-secondary" style="margin-left:10px;">📚 Показать руководство</button>
+        </div>
+        
+        <div id="help-section" style="display:none;background:linear-gradient(135deg, #e6f3ff 0%, #f0f8ff 100%);padding:20px;border-radius:12px;margin-top:20px;font-size:14px;color:#1a365d;border-left:4px solid #4299e1;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          <h4 style="margin:0 0 15px 0;color:#2d3748;font-size:16px;">� Руководство пользователя системы автопарка</h4>
+          
+          <div style="margin-bottom:15px;">
+            <strong>🚗 Структура автопарка:</strong>
+            <ul style="margin:5px 0 0 0;padding-left:20px;line-height:1.5;">
+              <li>В компании <strong>9 служебных автомобилей</strong> разных категорий комфорта</li>
+              <li>За каждым автомобилем <strong>закреплен персональный водитель</strong></li>
+              <li>Все автомобили доступны для бронирования сотрудниками согласно их должности</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <strong>👥 Категории доступа:</strong>
+            <ul style="margin:5px 0 0 0;padding-left:20px;line-height:1.5;">
+              <li><strong>Менеджер:</strong> доступны автомобили 1-й и 2-й категории (эконом и комфорт)</li>
+              <li><strong>Инженер:</strong> доступны автомобили 2-й и 3-й категории (комфорт и стандарт)</li>
+              <li><strong>Директор:</strong> доступны автомобили всех категорий (включая премиум)</li>
+              <li><strong>Тестовый пользователь:</strong> доступны автомобили 3-й категории (стандарт)</li>
+            </ul>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <strong>🔍 Как пользоваться поиском:</strong>
+            <ol style="margin:5px 0 0 0;padding-left:20px;line-height:1.5;">
+              <li><strong>Выберите себя</strong> в поле "Пользователь" (определяет доступные вам автомобили)</li>
+              <li><strong>Укажите время</strong> начала и окончания поездки</li>
+              <li><strong>Настройте фильтры</strong> (по желанию):
+                <ul style="margin:3px 0;padding-left:15px;">
+                  <li>Марка автомобиля - если нужна конкретная марка</li>
+                  <li>Закрепленный водитель - если хотите поехать с определенным водителем</li>
+                  <li>Категория комфорта - если нужен определенный уровень автомобиля</li>
+                </ul>
+              </li>
+              <li><strong>Нажмите "Найти автомобили"</strong> - система покажет доступные варианты</li>
+            </ol>
+          </div>
+
+          <div style="margin-bottom:15px;">
+            <strong>📅 Процесс бронирования:</strong>
+            <ol style="margin:5px 0 0 0;padding-left:20px;line-height:1.5;">
+              <li>В таблице результатов выберите подходящий автомобиль</li>
+              <li>Нажмите кнопку <strong>"🚗 Забронировать"</strong></li>
+              <li>Подтвердите бронирование в появившемся окне</li>
+              <li>Система автоматически:
+                <ul style="margin:3px 0;padding-left:15px;">
+                  <li>Проверит доступность автомобиля в указанное время</li>
+                  <li>Назначит закрепленного водителя</li>
+                  <li>Создаст бронь на ваше имя</li>
+                  <li>Если время занято - найдет альтернативное свободное время</li>
+                </ul>
+              </li>
+            </ol>
+          </div>
+
+          <div style="margin-bottom:0;">
+            <strong>📋 Управление бронями:</strong>
+            <ul style="margin:5px 0 0 0;padding-left:20px;line-height:1.5;">
+              <li>Все ваши брони отображаются в таблице <strong>"Брони выбранного пользователя"</strong></li>
+              <li>Каждая бронь содержит: период, автомобиль, категорию, назначенного водителя</li>
+              <li>Ненужные брони можно отменить кнопкой <strong>"❌ Отменить"</strong></li>
+              <li>Для очистки всех броней (администратор) используйте <strong>"🗑️ Сбросить брони"</strong></li>
+            </ul>
+          </div>
         </div>
       </div>
 
       <h2 class="section-title">📋 Результаты поиска</h2>
+      <div style="background:#f7fafc;padding:12px;border-radius:8px;margin-bottom:15px;font-size:13px;color:#4a5568;border:1px solid #e2e8f0;">
+        <strong>📊 Категории автомобилей:</strong>
+        <span style="margin-left:10px;">
+          ⭐ <strong>Первая (rank 1)</strong> - Премиум класс (BMW, Mercedes) | 
+          ⭐ <strong>Вторая (rank 2)</strong> - Комфорт класс (Skoda, Nissan) | 
+          ⭐ <strong>Третья (rank 3)</strong> - Стандарт класс (Volkswagen, Hyundai)
+        </span>
+      </div>
       <div class="table-container">
         <table id="cars-table">
           <thead>
@@ -432,6 +510,7 @@
               <th>🔢 VIN</th>
               <th>🏭 Марка / Модель</th>
               <th>⭐ Категория</th>
+              <th>👨‍💼 Водитель</th>
               <th>⚡ Действия</th>
             </tr>
           </thead>
@@ -495,6 +574,22 @@
   </div>
 
   <script>
+    // Управление показом руководства
+    document.getElementById('toggle-help').addEventListener('click', () => {
+      const helpSection = document.getElementById('help-section');
+      const toggleBtn = document.getElementById('toggle-help');
+      
+      if (helpSection.style.display === 'none') {
+        helpSection.style.display = 'block';
+        toggleBtn.textContent = '📚 Скрыть руководство';
+        toggleBtn.className = 'btn btn-secondary';
+      } else {
+        helpSection.style.display = 'none';
+        toggleBtn.textContent = '📚 Показать руководство';
+        toggleBtn.className = 'btn btn-secondary';
+      }
+    });
+
     const outEl = document.getElementById('out');
     const carsBodyEl = document.getElementById('cars-body');
     const emptyEl = document.getElementById('empty');
@@ -546,6 +641,7 @@
           <td>${car.vin ?? ''}</td>
           <td>${car.model.brand} ${car.model.model}</td>
           <td>${car.model.category.name} (rank ${car.model.category.rank})</td>
+          <td>${car.driver.full_name} <br><small style="color:#666;">${car.driver.phone}</small></td>
           <td><button data-car-id="${car.id}" class="btn btn-success btn-book">🚗 Забронировать</button></td>
         `;
         body.appendChild(tr);
