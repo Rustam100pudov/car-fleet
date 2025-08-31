@@ -6,7 +6,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Demo admin page to test available cars API
 Route::get('/admin/available-cars', function () {
     $users = App\Models\User::select('id','name','email','position_id')->get();
     $brands = App\Models\CarModel::selectRaw('distinct brand')->pluck('brand');

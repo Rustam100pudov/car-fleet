@@ -2,26 +2,22 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AvailableCarsController;
-use App\Http\Controllers\Api\BookingController; // ← добавили
-use App\Http\Controllers\Api\AdminBookingController; // admin helper
+use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\AdminBookingController;
 use App\Models\User;
 use App\Models\Position;
 use App\Models\ComfortCategory;
 
-// Dev: выдача токена (оставь для локальной разработки)
 Route::get('/dev/make-token', function () {
-    // optional: ?email=manager@example.com to get token for specific demo user
     $email = request()->query('email', 'demo@example.com');
     
     \Log::info('Token request', ['email' => $email]);
 
-    // Ищем существующего пользователя по email
     $user = User::where('email', $email)->first();
 
     if (!$user) {
         \Log::info('User not found, creating new user', ['email' => $email]);
-        // Определяем позицию по email
-        $positionName = 'Manager'; // по умолчанию
+        $positionName = 'Manager';
         if (str_contains($email, 'engineer')) {
             $positionName = 'Engineer';
         } elseif (str_contains($email, 'director')) {
@@ -36,7 +32,6 @@ Route::get('/dev/make-token', function () {
         if (!$position) {
             $position = Position::firstOrCreate(['name' => $positionName]);
             
-            // Устанавливаем связи с категориями комфорта в зависимости от позиции
             $cat1 = ComfortCategory::where('name', 'Первая')->first();
             $cat2 = ComfortCategory::where('name', 'Вторая')->first();
             $cat3 = ComfortCategory::where('name', 'Третья')->first();
@@ -65,7 +60,6 @@ Route::get('/dev/make-token', function () {
         ]);
     }
 
-    // Очищаем старые токены для этого пользователя
     $oldTokensCount = $user->tokens()->count();
     $user->tokens()->delete();
     \Log::info('Cleared old tokens', ['count' => $oldTokensCount]);
@@ -86,7 +80,6 @@ Route::get('/dev/make-token', function () {
     ]);
 });
 
-// Debug endpoint для диагностики
 Route::get('/debug/bookings', function () {
     $bookings = \App\Models\Booking::with('user', 'car')->get();
     return response()->json([
@@ -123,7 +116,6 @@ Route::get('/debug/logs', function () {
     }
     
     $logs = file_get_contents($logFile);
-    // Берем последние 5000 символов
     $logs = substr($logs, -5000);
     
     return response()->json(['logs' => $logs]);
@@ -166,17 +158,13 @@ Route::get('/debug/cars', function () {
     ]);
 });
 
-// Все API под защитой Sanctum
 Route::middleware('auth:sanctum')->group(function () {
-    // Свободные машины
     Route::get('/available-cars', [AvailableCarsController::class, 'index']);
 
-    // Бронирования
     Route::get('/bookings', [BookingController::class, 'index']);
     Route::post('/bookings', [BookingController::class, 'store']);
     Route::delete('/bookings/{booking}', [BookingController::class, 'destroy']);
 
-    // Admin helpers for local demo: list/delete all bookings
     Route::get('/admin/bookings', [AdminBookingController::class, 'index']);
     Route::get('/admin/user-bookings', [AdminBookingController::class, 'userBookings']);
     Route::delete('/admin/bookings/{id}', [AdminBookingController::class, 'destroy']);
